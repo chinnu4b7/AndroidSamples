@@ -1,0 +1,21 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : MvcExample
+//      Created At   : 27-Jan-2014
+//      Author       : prasad
+//      Class Name   : Controller.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
+package com.view;
+
+/**
+ * @author prasad
+ *
+ */
+public class Controller {
+
+}

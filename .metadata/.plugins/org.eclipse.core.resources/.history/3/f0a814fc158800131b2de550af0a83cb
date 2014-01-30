@@ -1,0 +1,45 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : ImageCachingSample
+//      Created At   : 28-Jan-2014
+//      Author       : prasad
+//      Class Name   : CustomProgressBar.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
+package com.example.imagecachingsample;
+
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.view.ViewGroup.LayoutParams;
+
+/**
+ * @author prasad
+ *
+ */
+public class CustomProgressBar extends Dialog{
+
+	/**
+	 * @param context
+	 */
+	public CustomProgressBar(Context context) {
+		super(context,R.style.CustomProgressBar);
+	}
+	
+	public static Dialog show(Context context, String title, CharSequence message,boolean intermediate, 
+			boolean cancelable) {
+		
+		CustomProgressBar progressBar = new CustomProgressBar(context);
+		progressBar.setTitle(title);
+		progressBar.setCancelable(cancelable);
+		progressBar.addContentView(new ProgressDialog(context), new LayoutParams(LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT));
+		return progressBar;
+	}
+	
+	pub
+}

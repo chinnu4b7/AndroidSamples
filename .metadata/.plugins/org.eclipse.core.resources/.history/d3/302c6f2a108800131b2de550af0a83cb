@@ -1,0 +1,41 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : ImageCachingSample
+//      Created At   : 28-Jan-2014
+//      Author       : prasad
+//      Class Name   : BitmapDownloadTasker.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
+package com.example.imagecachingsample;
+
+import java.lang.ref.WeakReference;
+
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.widget.ImageView;
+
+/**
+ * @author prasad
+ *
+ */
+public class BitmapDownloaderTask extends AsyncTask<Void,Void,Bitmap>{
+
+	private final WeakReference<ImageView> imageReference;
+	
+	/**
+	 * 
+	 */
+	public BitmapDownloaderTask(ImageView imageView) {
+		imageReference = new WeakReference<ImageView>(imageView);
+	}
+	
+	@Override
+	protected Bitmap doInBackground(Void... params) {
+		return null;
+	}
+	
+}

@@ -1,0 +1,51 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : ImageCachingSample
+//      Created At   : 28-Jan-2014
+//      Author       : prasad
+//      Class Name   : BitmapUtils.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
+package com.example.imagecachingsample;
+
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+/**
+ * @author prasad
+ * 
+ */
+public class BitmapUtils {
+	public static Bitmap decodeSampleBitmapFromResource(Resources res,
+			int reqWidth, int reqHeight) {
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeResource(res, R.id.imageview, options);
+
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+		
+		options.inJustDecodeBounds = false;
+		return BitmapFactory.decodeResource(res, R.id.imageview, options);
+	}
+	
+	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		final int outWidth = options.outWidth;
+		final int outHeight = options.outHeight;
+		int inSampleSize = 1;
+		
+		if(outWidth > reqWidth || outHeight > reqHeight) {
+			final int halfWidth = outWidth / 2;
+			final int halfHeight = outHeight / 2;
+			while( (halfWidth / inSampleSize) > reqWidth && (halfHeight / inSampleSize) > reqHeight) {
+				inSampleSize *= 2; 
+			}
+		}
+		
+		return inSampleSize;
+	}
+}

@@ -1,0 +1,27 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : ImageCachingSample
+//      Created At   : 28-Jan-2014
+//      Author       : prasad
+//      Class Name   : BitmapUtils.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
+package com.example.imagecachingsample;
+
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
+
+/**
+ * @author prasad
+ *
+ */
+public class BitmapUtils {
+	public static void decodeSampleBitmapFromResource(Resources res,
+			int reqWidth, int reqHeight) {
+		
+	}
+}

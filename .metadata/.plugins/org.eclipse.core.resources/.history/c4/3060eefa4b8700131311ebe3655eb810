@@ -1,0 +1,35 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : Demo
+//      Created At   : 27-Jan-2014
+//      Author       : prasad
+//      Class Name   : CustomDialog.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
+package com.uitls;
+
+import android.app.DialogFragment;
+
+/**
+ * @author prasad
+ *
+ */
+public class CustomDialog extends DialogFragment{
+	
+	
+	public interface CustomDialogListeners {
+		/**
+		 * 
+		 */
+		void onPositiveButtonClick();
+		
+		/**
+		 * 
+		 */
+		void onNegativeButtonClick();
+	}
+}

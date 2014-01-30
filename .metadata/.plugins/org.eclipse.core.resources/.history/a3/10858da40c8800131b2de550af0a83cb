@@ -1,0 +1,82 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : ImageCachingSample
+//      Created At   : 28-Jan-2014
+//      Author       : prasad
+//      Class Name   : BitmapUtils.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
+package com.example.imagecachingsample;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.http.AndroidHttpClient;
+import android.util.Log;
+
+/**
+ * @author prasad
+ * 
+ */
+public class BitmapUtils {
+	private static final String TAG = "BitmapUtils";
+	public static Bitmap decodeSampleBitmapFromResource(Resources res,int resId,
+			int reqWidth, int reqHeight) {
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeResource(res, resId, options);
+
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+		
+		options.inJustDecodeBounds = false;
+		return BitmapFactory.decodeResource(res, resId, options);
+	}
+	
+	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		final int outWidth = options.outWidth;
+		final int outHeight = options.outHeight;
+		int inSampleSize = 1;
+		
+		if(outWidth > reqWidth || outHeight > reqHeight) {
+			final int halfWidth = outWidth / 2;
+			final int halfHeight = outHeight / 2;
+			while( (halfWidth / inSampleSize) > reqWidth && (halfHeight / inSampleSize) > reqHeight) {
+				inSampleSize *= 2; 
+			}
+		}
+		
+		return inSampleSize;
+	}
+	
+	public static Bitmap downloadBitmap(String url) {
+		final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
+		final HttpGet getReq = new HttpGet(url);
+		
+		try {
+			HttpResponse response = client.execute(getReq);
+			int status = response.getStatusLine().getStatusCode();
+			if (status != HttpStatus.SC_OK) {
+				Log.e(TAG, "--Response error--");
+				return null;
+			}
+			
+			HttpEntity entity = response.getEntity();
+			InputStream is = entity.getContent();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+}

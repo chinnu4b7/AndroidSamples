@@ -1,0 +1,72 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : ImageCachingSample
+//      Created At   : 28-Jan-2014
+//      Author       : prasad
+//      Class Name   : CustomAdapter.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
+package com.example.imagecachingsample;
+
+import android.app.Activity;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+
+/**
+ * @author prasad
+ *
+ */
+public class CustomAdapter extends BaseAdapter{
+	private String[] urls;
+	private Context context;
+	public CustomAdapter(Context context, String[] urls) {
+		this.context = context;
+		this.urls = urls;
+	}
+	
+	@Override
+	public int getCount() {
+		return urls.length;
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return urls[position];
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	private ViewHolder mHolder;
+	private ImageDownloader imageDownloader = new ImageDownloader(context);
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		if (convertView == null) {
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+			convertView = inflater.inflate(R.layout.list_item, null);
+			mHolder = new ViewHolder();
+			
+			mHolder.imageView = (ImageView) convertView.findViewById(R.id.li_image_view);
+			convertView.setTag(mHolder);
+		} else {
+			mHolder = (ViewHolder) convertView.getTag();
+		}
+		imageDownloader.download(urls[position], mHolder.imageView);
+//		new BitmapDownloaderTask(context, mHolder.imageView).execute(urls[position]);
+		return convertView;
+	}
+
+	class ViewHolder {
+		ImageView imageView;
+	}
+}

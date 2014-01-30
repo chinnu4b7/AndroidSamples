@@ -1,0 +1,362 @@
+package com.example.disablenetwork;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.actionbarsherlock.app.SherlockListActivity;
+import com.lib.afwall.Api;
+import com.lib.afwall.Api.PackageInfoData;
+import com.lib.afwall.AppListArrayAdapter;
+import com.lib.afwall.G;
+import com.lib.afwall.RootShell.RootCommand;
+
+public class MainActivity extends SherlockListActivity implements OnClickListener {
+
+	private TextView mSelected;
+	private String[] mLocations;
+	private Menu mainMenu;
+
+	/** progress dialog instance */
+	private ListView listview = null;
+	/** indicates if the view has been modified and not yet saved */
+	public static boolean dirty = false;
+	private String currentPassword = "";
+
+	public String getCurrentPassword() {
+		return currentPassword;
+	}
+
+	public void setCurrentPassword(String currentPassword) {
+		this.currentPassword = currentPassword;
+	}
+
+	private final int _ReqCreatePattern = 0;
+	private final int _ReqSignIn = 1;
+
+	ProgressDialog plsWait;
+
+	ArrayAdapter<String> spinnerAdapter;
+
+	private int index;
+	private int top;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		if (getIntent().getBooleanExtra("EXIT", false)) {
+			finish();
+		}
+
+		try {
+			/* enable hardware acceleration on Android >= 3.0 */
+			final int FLAG_HARDWARE_ACCELERATED = WindowManager.LayoutParams.class
+					.getDeclaredField("FLAG_HARDWARE_ACCELERATED").getInt(null);
+			getWindow().setFlags(FLAG_HARDWARE_ACCELERATED,
+					FLAG_HARDWARE_ACCELERATED);
+		} catch (Exception e) {
+		}
+		checkPreferences();
+		setContentView(R.layout.activity_main);
+		// set onclick listeners
+		this.findViewById(R.id.label_mode).setOnClickListener(this);
+		this.findViewById(R.id.img_wifi).setOnClickListener(this);
+		this.findViewById(R.id.img_3g).setOnClickListener(this);
+		this.findViewById(R.id.img_reset).setOnClickListener(this);
+		this.findViewById(R.id.img_invert).setOnClickListener(this);
+
+		if (G.disableIcons()) {
+			this.findViewById(R.id.imageHolder).setVisibility(View.GONE);
+		}
+
+		if (G.enableRoam()) {
+			addColumns(R.id.img_roam);
+		}
+
+		if (G.enableVPN()) {
+			addColumns(R.id.img_vpn);
+		}
+
+		if (G.enableLAN()) {
+			addColumns(R.id.img_lan);
+		}
+
+		// setupMultiProfile();
+
+		// updateIconStatus();
+
+		// language
+		String lang = G.locale();
+		Api.updateLanguage(getApplicationContext(), lang);
+		plsWait = new ProgressDialog(this);
+		plsWait.setCancelable(false);
+		Api.assertBinaries(this, true);
+
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		// to improve responsiveness, try to open a root shell in the background
+		// on launch
+		// (if this fails we'll try again later)
+		List<String> cmds = new ArrayList<String>();
+		cmds.add("true");
+
+		new RootCommand().setFailureToast(R.string.error_su)
+				.setReopenShell(true).run(getApplicationContext(), cmds);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (this.listview == null) {
+			this.listview = (ListView) this.findViewById(R.id.listview);
+		}
+
+		refreshHeader();
+
+		NotificationManager mNotificationManager = (NotificationManager) this
+				.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.cancel(24556);
+
+		showOrLoadApplications();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		index = this.listview.getFirstVisiblePosition();
+		View v = this.listview.getChildAt(0);
+		top = (v == null) ? 0 : v.getTop();
+	}
+	
+	/**
+	 * Refresh informative header
+	 */
+	private void refreshHeader() {
+		final String mode = G.pPrefs.getString(Api.PREF_MODE,
+				Api.MODE_WHITELIST);
+		final TextView labelmode = (TextView) this
+				.findViewById(R.id.label_mode);
+		final Resources res = getResources();
+		int resid = (mode.equals(Api.MODE_WHITELIST) ? R.string.mode_whitelist
+				: R.string.mode_blacklist);
+		labelmode.setText(res.getString(R.string.mode_header,
+				res.getString(resid)));
+	}
+
+	/**
+	 * Check if the stored preferences are OK
+	 */
+	private void checkPreferences() {
+		final Editor editor = G.pPrefs.edit();
+		boolean changed = false;
+		if (G.pPrefs.getString(Api.PREF_MODE, "").length() == 0) {
+			editor.putString(Api.PREF_MODE, Api.MODE_WHITELIST);
+			changed = true;
+		}
+		if (changed)
+			editor.commit();
+	}
+
+	private void addColumns(int id) {
+		ImageView view = (ImageView) this.findViewById(id);
+		view.setVisibility(View.VISIBLE);
+		view.setOnClickListener(this);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		String lang = G.locale();
+		Api.updateLanguage(getApplicationContext(), lang);
+		super.onCreateOptionsMenu(menu);
+		getSupportMenuInflater().inflate(R.menu.menu_bar, menu);
+		mainMenu = menu;
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	public class GetAppList extends AsyncTask<Void, Integer, Void> {
+
+		boolean ready = false;
+		Activity mContext = null;
+		AsyncTask<Void, Integer, Void> myAsyncTaskInstance = null;
+
+		@Override
+		protected void onPreExecute() {
+			publishProgress(0);
+		}
+
+		public void doProgress(int value) {
+			publishProgress(value);
+		}
+
+		public AsyncTask<Void, Integer, Void> getInstance() {
+			// if the current async task is already running, return null: no new
+			// async task
+			// shall be created if an instance is already running
+			if ((myAsyncTaskInstance != null)
+					&& myAsyncTaskInstance.getStatus() == Status.RUNNING) {
+				// it can be running but cancelled, in that case, return a new
+				// instance
+				if (myAsyncTaskInstance.isCancelled()) {
+					myAsyncTaskInstance = new GetAppList();
+				} else {
+					return null;
+				}
+			}
+
+			// if the current async task is pending, it can be executed return
+			// this instance
+			if ((myAsyncTaskInstance != null)
+					&& myAsyncTaskInstance.getStatus() == Status.PENDING) {
+				return myAsyncTaskInstance;
+			}
+
+			// if the current async task is finished, it can't be executed
+			// another time, so return a new instance
+			if ((myAsyncTaskInstance != null)
+					&& myAsyncTaskInstance.getStatus() == Status.FINISHED) {
+				myAsyncTaskInstance = new GetAppList();
+			}
+
+			// if the current async task is null, create a new instance
+			if (myAsyncTaskInstance == null) {
+				myAsyncTaskInstance = new GetAppList();
+			}
+			// return the current instance
+			return myAsyncTaskInstance;
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			Api.getApps(MainActivity.this, this);
+			if (isCancelled())
+				return null;
+			// publishProgress(-1);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			showApplications("");
+			publishProgress(-1);
+			try {
+				plsWait.dismiss();
+			} catch (Exception e) {
+				// nothing
+			}
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... progress) {
+
+			if (progress[0] == 0) {
+				plsWait.setMax(getPackageManager().getInstalledApplications(0)
+						.size());
+				plsWait.setMessage(getString(R.string.reading_apps));
+				plsWait.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				plsWait.show();
+			} else if (progress[0] == -1) {
+			} else {
+				plsWait.setProgress(progress[0]);
+			}
+		}
+	};
+
+	/**
+	 * Show the list of applications
+	 */
+	private void showApplications(final String searchStr) {
+		this.dirty = false;
+		List<PackageInfoData> searchApp = new ArrayList<PackageInfoData>();
+		final List<PackageInfoData> apps = Api.getApps(this, null);
+		boolean isResultsFound = false;
+		if (searchStr != null && searchStr.length() > 1) {
+			for (PackageInfoData app : apps) {
+				for (String str : app.names) {
+					if (str.contains(searchStr.toLowerCase())
+							|| str.toLowerCase().contains(
+									searchStr.toLowerCase())
+							&& !searchApp.contains(app)) {
+						searchApp.add(app);
+						isResultsFound = true;
+					}
+				}
+			}
+		}
+
+		final List<PackageInfoData> apps2 = isResultsFound ? searchApp
+				: searchStr.equals("") ? apps
+						: new ArrayList<Api.PackageInfoData>();
+
+		// Sort applications - selected first, then alphabetically
+		Collections.sort(apps2, new PackageComparator());
+
+		this.listview.setAdapter(new AppListArrayAdapter(this,
+				getApplicationContext(), apps2));
+		// restore
+		this.listview.setSelectionFromTop(index, top);
+
+	}
+
+	/**
+	 * If the applications are cached, just show them, otherwise load and show
+	 */
+	private void showOrLoadApplications() {
+		// nocache!!
+		new GetAppList().execute();
+	}
+
+	class PackageComparator implements Comparator<PackageInfoData> {
+
+		@Override
+		public int compare(PackageInfoData o1, PackageInfoData o2) {
+			if (o1.firstseen != o2.firstseen) {
+				return (o1.firstseen ? -1 : 1);
+			}
+			boolean o1_selected = o1.selected_3g || o1.selected_wifi
+					|| o1.selected_roam || o1.selected_vpn || o1.selected_lan;
+			boolean o2_selected = o2.selected_3g || o2.selected_wifi
+					|| o2.selected_roam || o2.selected_vpn || o2.selected_lan;
+
+			if (o1_selected == o2_selected) {
+				return String.CASE_INSENSITIVE_ORDER.compare(o1.names.get(0)
+						.toString(), o2.names.get(0).toString());
+			}
+			if (o1_selected)
+				return -1;
+			return 1;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.view.View.OnClickListener#onClick(android.view.View)
+	 */
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+
+	}
+}

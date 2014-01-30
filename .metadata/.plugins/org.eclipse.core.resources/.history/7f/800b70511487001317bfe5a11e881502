@@ -1,0 +1,21 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : DisableNetwork
+//      Created At   : 27-Jan-2014
+//      Author       : prasad
+//      Class Name   : BuildConfig.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
+package com.lib.afwall;
+
+/**
+ * @author prasad
+ *
+ */
+public class BuildConfig {
+
+}

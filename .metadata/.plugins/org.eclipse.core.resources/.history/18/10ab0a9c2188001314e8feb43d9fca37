@@ -1,0 +1,30 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : ImageCachingSample
+//      Created At   : 28-Jan-2014
+//      Author       : prasad
+//      Class Name   : ImageDownloader.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
+package com.example.imagecachingsample;
+
+import android.content.Context;
+import android.widget.ImageView;
+
+/**
+ * @author prasad
+ *
+ */
+public class ImageDownloader {
+	private Context context;
+	public ImageDownloader(Context context) {
+		this.context = context;
+	}
+	public void download(String url, ImageView imageView) {
+		BitmapDownloaderTask bitmapDownloaderTask = new BitmapDownloaderTask(context,imageView);
+	}
+}
