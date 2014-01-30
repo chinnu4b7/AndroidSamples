@@ -29,7 +29,6 @@ public class BitmapDownloaderTask extends AsyncTask<String,Void,Bitmap>{
 	private final WeakReference<ImageView> imageReference;
 //	private Context context;
 	public BitmapDownloaderTask(Context context,ImageView imageView) {
-//		this.context = context;
 		imageReference = new WeakReference<ImageView>(imageView);
 	}
 	
