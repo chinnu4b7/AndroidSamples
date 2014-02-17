@@ -34,4 +34,4 @@ logcat.view.colsize.TID=66
 logcat.view.colsize.Tag=147
 logcat.view.colsize.Text=796
 logcat.view.colsize.Time=191
-logcat.view.filters.list=name\: 'AFWall', tag\: 'AFWall', text\: '', pid\: '', app\: '', level\: 'verbose', 
+logcat.view.filters.list=name\: 'AFWall', tag\: 'AFWall', text\: '', pid\: '', app\: '', level\: 'verbose', name\: 'BitmapUtils', tag\: 'BitmapUtils', text\: '', pid\: '', app\: '', level\: 'verbose', 

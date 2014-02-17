@@ -1,0 +1,12 @@
+1392096022958	Delete elements
+1392096194515	Rename package 'test.java.com.google.zxing.qrcode.encoder'
+1392096208821	Rename package 'main.java.com.google.zxing'
+1392096223874	Rename package 'main.java.com.google.zxing.aztec'
+1392096230357	Rename package 'main.java.com.google.zxing.aztec.decoder'
+1392096237824	Rename package 'main.java.com.google.zxing.aztec.detector'
+1392096242721	Rename package 'main.java.com.google.zxing.aztec.encoder'
+1392096247325	Rename package 'main.java.com.google.zxing.client.result'
+1392096252833	Rename package 'main.java.com.google.zxing.common'
+1392096258347	Rename package 'main.java.com.google.zxing.common.detector'
+1392096263351	Rename package 'main.java.com.google.zxing.common.reedsolomon'
+1392096699029	Rename package 'com.google.zxing.de'

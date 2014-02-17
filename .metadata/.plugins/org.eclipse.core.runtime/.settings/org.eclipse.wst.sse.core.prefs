@@ -1,2 +1,2 @@
 eclipse.preferences.version=1
-task-tag-projects-already-scanned=Demo,AFWall,actionbarsherlock,android-lockpattern,DisableNetwork,MvcExample,com.jtschohl.androidfirewall.MainActivity,ImageCachingSample,LazyList
+task-tag-projects-already-scanned=Demo,AFWall,actionbarsherlock,android-lockpattern,DisableNetwork,MvcExample,com.jtschohl.androidfirewall.MainActivity,ImageCachingSample,LazyList,DeviceAdminSample,GpsTracking,google-play-services_lib,AndroScan,CaptureActivity,NetworkLockApp,Zxing Lib Android,AutoStartAtBoot,ShortCutSample,UnUninstallableApp,NfcSample,OpenCV Sample - face-detection

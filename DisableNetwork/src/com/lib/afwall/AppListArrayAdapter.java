@@ -35,7 +35,7 @@ public class AppListArrayAdapter extends ArrayAdapter<PackageInfoData> implement
 	final int color = G.sysColor();
 	final int defaultColor = Color.WHITE;
 
-	public AppListArrayAdapter(MainActivity activity, Context context, List<PackageInfoData> apps) {
+	public AppListArrayAdapter(Activity activity, Context context, List<PackageInfoData> apps) {
 		super(context, R.layout.main_list, apps);
 		this.activity = activity;
 		this.context = context;

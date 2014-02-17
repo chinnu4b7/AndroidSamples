@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        style="@style/MatchWidth"
+        android:weightSum="1" >
+
+        <TextView
+            android:id="@+id/x_label"
+            style="@style/style_bold_text"
+            android:text="X-VALUE" />
+
+        <TextView
+            android:id="@+id/y_label"
+            style="@style/style_bold_text"
+            android:text="Y-VALUE" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </ListView>
+
+</LinearLayout>

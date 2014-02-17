@@ -1,0 +1,61 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : GpsTracking
+//      Created At   : 10-Feb-2014
+//      Author       : prasad
+//      Class Name   : MySqliteHelper.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
+package com.utils;
+
+import com.utils.MySqliteUtils.ColumnEntry;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.BaseColumns;
+
+/**
+ * @author prasad
+ *
+ */
+public class MySqliteHelper extends SQLiteOpenHelper{
+
+	private static final String DATABASE_NAME = "LocationUpdates.db";
+	private static final int DATABASE_VERSION = 1;
+	
+	private static final String TABLE_CREATE = "CREATE TABLE "+ ColumnEntry.TABLE_NAME + " ("+ColumnEntry._ID +
+			" INTEGER PRIMARY KEY,"+ ColumnEntry.COLUMN_LATITUDE+" TEXT,"+ColumnEntry.COLUMN_LONGITUDE+" TEXT )";
+	private static final String TABLE_DELETE = "DROP TABLE IF EXISTS "+ColumnEntry.TABLE_NAME;
+	private SQLiteOpenHelper mHelper;
+	/**
+	 * @param context
+	 * @param name
+	 * @param factory
+	 * @param version
+	 */
+	public MySqliteHelper(Context context) {
+		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	}
+
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+		db.execSQL(TABLE_CREATE);
+	}
+
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		db.d
+	}
+	
+	@Override
+	public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		super.onDowngrade(db, oldVersion, newVersion);
+		onUpgrade(db, oldVersion, newVersion);
+	}
+}

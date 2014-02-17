@@ -1,0 +1,25 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : OpenCV Sample - face-detection
+//      Created At   : 17-Feb-2014
+//      Author       : prasad
+//      Class Name   : OpenCVEngineInterface.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
+package org.opencv.engine;
+
+/**
+ * @author prasad
+ *
+ */
+interface OpenCVEngineInterface {
+
+	/**
+	 * 
+	 */
+	int getEngineVersion();
+}

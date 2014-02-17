@@ -1,0 +1,46 @@
+package com.utils;
+
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Points implements Serializable{
+	float latitude;
+	float longitude;
+	long id;
+	
+	/**
+	 * @param latitude the latitude to set
+	 */
+	public void setLatitude(float latitude) {
+		this.latitude = latitude;
+	}
+	
+	/**
+	 * @return the latitude
+	 */
+	public float getLatitude() {
+		return latitude;
+	}
+	
+	/**
+	 * @param longitude the longitude to set
+	 */
+	public void setLongitude(float longitude) {
+		this.longitude = longitude;
+	}
+	
+	/**
+	 * @return the longitude
+	 */
+	public float getLongitude() {
+		return longitude;
+	}
+	
+	public void setId(long id) {
+		this.id = id;
+	}
+	
+	public long getId() {
+		return id;
+	}
+}

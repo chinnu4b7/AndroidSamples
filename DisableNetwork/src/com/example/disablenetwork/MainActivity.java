@@ -1,3 +1,15 @@
+//***************************************************************
+// Copyright (C) 2013 Baraan Soft
+//***************************************************************
+//      Project Name : DisableNetwork
+//      Created At   : 12-Feb-2014
+//      Author       : prasad
+//      Class Name   : MainActivity.java
+//
+//***************************************************************
+// Class Description :
+//
+//***************************************************************
 /**
  * Main application activity.
  * This is the screen displayed when you open the application
